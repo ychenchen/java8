@@ -268,7 +268,54 @@ public class LambaExpressions {
 	}
 	
 	//3.8. Useful methods to compose lambda expressions
+	//3.8.1. Composing Comparators
+	Comparator<Apple> c1 = Comparator.comparing(Apple::getWeight);
+	//Reversed order
+	public static void sortInventory5() {
+		inventory.sort(comparing(Apple::getWeight).reversed());
+	}
+	//Chaining Comparators
+	public static void sortInventory6() {
+		inventory.sort(comparing(Apple::getWeight).reversed().thenComparing(Apple::getColor));
+	}
 	
+	//3.8.2. Composing Predicates
+	//The Predicate interface includes three methods that let you reuse an existing Predicate to create
+	//more complicated ones: negate, and, and or. 
+	Predicate<Apple> redApple = (Apple a) -> "red".equals(a.getColor());
+	Predicate<Apple> notRedApple = redApple.negate();
+	//You may want to combine two lambdas to say that an apple is both red and heavy with the and method:
+	Predicate<Apple> redAndHeavyApple = redApple.and(a -> a.getWeight() > 150);
+	//You can combine the resulting predicate one step further to express apples that are red and heavy (above 150 g) or just green apples:
+	Predicate<Apple> redAndHeaveAppleOrGreen = redApple.and(a -> a.getWeight() > 150).or(a -> "green".equals(a.getColor()));
+	
+	//3.8.3. Composing Functions
+	//Finally, you can also compose lambda expressions represented by the Function interface. The
+	//Function interface comes with two default methods for this, andThen and compose, which both
+	//return an instance of Function.
+	Function<Integer, Integer> f = x -> x+1;
+	Function<Integer, Integer> g = x -> x*2;
+	Function<Integer, Integer> h = f.andThen(g);
+	int result1 = h.apply(1);	//4
+	
+	Function<Integer, Integer> i = f.compose(g);
+	int result2 = i.apply(1);	//3
+	
+	//3.9. Similar ideas from mathematics
+	//Omit...
+	
+	//3.10. Summary
+	//A lambda expression can be understood as a kind of anonymous function: it doesn¡¯t have a name, but it has a list of parameters, a body, a return type, and also possibly a list of exceptions that can be thrown.
+	//Lambda expressions let you pass code concisely.
+	//A functional interface is an interface that declares exactly one abstract method.
+	//Lambda expressions can be used only where a functional interface is expected.
+	//Lambda expressions let you provide the implementation of the abstract method of a functional interface directly inline and treat the whole expression as an instance of a functional interface.
+	//Java 8 comes with a list of common functional interfaces in the java.util .function package, which includes Predicate<T>, Function<T, R>, Supplier<T>, Consumer<T>, and BinaryOperator<T>, described in table 3.2.
+	//There are primitive specializations of common generic functional interfaces such as Predicate<T> and Function<T, R> that can be used to avoid boxing operations: IntPredicate, IntToLongFunction, and so on.
+	//The execute around pattern (that is, you need to execute a bit of behavior in the middle of code that¡¯s always required in a method, for example, resource allocation and cleanup) can be used with lambdas to gain additional flexibility and reusability.
+	//The type expected for a lambda expression is called the target type.
+	//Method references let you reuse an existing method implementation and pass it around directly.
+	//Functional interfaces such as Comparator, Predicate, and Function have several default methods that can be used to combine lambda expressions.
 	
 	public static void main(String[] args) {
 		Predicate<String> nonEmptyStringPredicate = (String s) -> !s.isEmpty();
